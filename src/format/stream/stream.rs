@@ -5,6 +5,8 @@ use format::context::common::Context;
 use libc::c_int;
 use {DictionaryRef, Discard, Rational};
 
+use Error;
+
 #[derive(Debug)]
 pub struct Stream<'a> {
     context: &'a Context,
@@ -29,6 +31,11 @@ impl<'a> Stream<'a> {
     #[cfg(not(feature = "ffmpeg_5_0"))]
     pub fn codec(&self) -> codec::Context {
         unsafe { codec::Context::wrap((*self.as_ptr()).codec, Some(self.context.destructor())) }
+    }
+    
+    #[cfg(feature = "ffmpeg_5_0")]
+    pub fn codec(&self) -> Result<codec::Context, Error> {
+        codec::Context::from_parameters(self.parameters())
     }
 
     pub fn parameters(&self) -> codec::Parameters {
