@@ -29,8 +29,8 @@ impl<'a> Stream<'a> {
     }
 
     #[cfg(not(feature = "ffmpeg_5_0"))]
-    pub fn codec(&self) -> codec::Context {
-        unsafe { codec::Context::wrap((*self.as_ptr()).codec, Some(self.context.destructor())) }
+    pub fn codec(&self) -> Result<codec::Context, Error>  {
+        Ok(unsafe { codec::Context::wrap((*self.as_ptr()).codec, Some(self.context.destructor())) })
     }
     
     #[cfg(feature = "ffmpeg_5_0")]
